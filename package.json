@@ -1,0 +1,45 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint --ext js,ts packages/*/src packages/*/test"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-typescript": "^7.7.7",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/react-hooks": "^3.2.1",
+    "@types/jest": "^24.0.24",
+    "@types/react": "^16.9.17",
+    "@types/react-redux": "^7.1.5",
+    "@typescript-eslint/eslint-plugin": "^2.12.0",
+    "@typescript-eslint/parser": "^2.12.0",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-react-app": "^5.1.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-plugin-flowtype": "^4.5.2",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "jest": "^24.9.0",
+    "lerna": "^3.19.0",
+    "prettier": "^1.19.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
+    "react-test-renderer": "^16.12.0",
+    "redux": "^4.0.4",
+    "typescript": "^3.7.4"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

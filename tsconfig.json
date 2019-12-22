@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "noUnusedLocals": true,
+    "baseUrl": "./packages/",
+    "lib": ["dom", "esnext"],
+    "jsx": "react",
+    "declaration": false,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "strict": true,
+    "noImplicitAny": false,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "pretty": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
