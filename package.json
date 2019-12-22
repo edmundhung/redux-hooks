@@ -2,8 +2,9 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "bootstrap": "lerna bootstrap",
     "test": "jest",
-    "lint": "eslint --ext js,ts packages/*/src packages/*/test"
+    "lint": "eslint --ext js,ts packages/*/src test"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",
