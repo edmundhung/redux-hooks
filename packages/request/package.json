@@ -11,7 +11,8 @@
   "author": "Edmund Hung <me@edmund.dev>",
   "homepage": "https://github.com/EdStudio/redux-hooks",
   "license": "MIT",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/EdStudio/redux-hooks.git"
