@@ -23,6 +23,7 @@ const cjs = {
             extensions,
         }),
         typescript({
+            tsconfig: './packages/request/tsconfig.json',
             useTsconfigDeclarationDir: true,
         }),
         babel({
@@ -45,6 +46,7 @@ const es = {
             extensions,
         }),
         typescript({
+            tsconfig: './packages/request/tsconfig.json',
             tsconfigOverride: { compilerOptions: { declaration: false } },
         }),
         babel({
