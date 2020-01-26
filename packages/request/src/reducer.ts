@@ -1,23 +1,23 @@
 import { AnyAction, Store } from 'redux';
-import { Arguments, Request, RequestResult } from './types';
+import { Arguments, Request, RequestState } from './types';
 import {
     requestPending,
     requestSuccess,
     requestFailure,
     getRequestName,
     getRequestCacheKey,
-    getRequestResult,
+    getRequestState,
 } from './utils';
 
 export type State = {
     [name in string]: {
-        [cacheKey in string]: RequestResult<any>;
+        [cacheKey in string]: RequestState;
     };
 };
 
-export const initialResult: RequestResult<any> = {
-    requesting: false,
-    requested: undefined,
+export const initialState: RequestState = {
+    lastRequestTimestamp: NaN,
+    lastResponseTimestamp: NaN,
 };
 
 export function makeAction<P, A extends Arguments>(
@@ -25,11 +25,13 @@ export function makeAction<P, A extends Arguments>(
     request: Request<A, P>,
     name: string,
     cacheKey: string,
+    timestamp = Date.now(),
 ): Request<A> {
     return async (...args: A) => {
         store.dispatch({
             type: requestPending(name),
             cacheKey,
+            timestamp,
         });
 
         try {
@@ -38,36 +40,48 @@ export function makeAction<P, A extends Arguments>(
             store.dispatch({
                 type: requestSuccess(name),
                 cacheKey,
+                timestamp,
                 payload,
             });
         } catch (error) {
             store.dispatch({
                 type: requestFailure(name),
                 cacheKey,
+                timestamp,
                 error: { message: error.message },
             });
         }
     };
 }
 
-export function makeSelector(name: string, cacheKey: string) {
-    return (state?: State): RequestResult<any> => {
+export function makeSelector(name: string, cacheKey: string | null) {
+    return (state?: State): RequestState => {
         if (!state) {
             throw new Error(
                 'could not find request reducer state; please ensure the reducer is setup probably',
             );
         }
 
-        return state?.[name]?.[cacheKey] ?? initialResult;
+        if (cacheKey === null) {
+            return initialState;
+        }
+
+        return state?.[name]?.[cacheKey] ?? initialState;
     };
 }
 
 export default function reducer(state: State = {}, action: AnyAction): State {
     const name = getRequestName(action);
     const cacheKey = getRequestCacheKey(action);
-    const result = getRequestResult(action);
 
-    if (!name || !cacheKey || !result) {
+    if (!name || !cacheKey) {
+        return state;
+    }
+
+    const prevState = state?.[name]?.[cacheKey] ?? initialState;
+    const nextState = getRequestState(prevState, action);
+
+    if (nextState === prevState) {
         return state;
     }
 
@@ -75,7 +89,7 @@ export default function reducer(state: State = {}, action: AnyAction): State {
         ...state,
         [name]: {
             ...state?.[name],
-            [cacheKey]: result,
+            [cacheKey]: nextState,
         },
     };
 }

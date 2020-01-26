@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux';
-import { RequestError, RequestResult } from './types';
+import { RequestError, RequestState } from './types';
 
 export function requestPending(name: string): string {
     return `request/${name}/pending`;
@@ -30,39 +30,51 @@ export function getRequestCacheKey(action: AnyAction): string | null {
     return action.cacheKey ?? null;
 }
 
-export function getRequestData<P>(action: AnyAction): P | null {
-    return action.payload ?? null;
+export function getRequestTimestamp(action: AnyAction): number {
+    return Number(action.timestamp);
 }
 
-export function getRequestError(action: AnyAction): RequestError | null {
-    return action.error ?? null;
+export function getRequestData(action: AnyAction): any | undefined {
+    return action.payload;
 }
 
-export function getRequestResult<P>(action: AnyAction): RequestResult<P> | null {
-    const name = getRequestName(action);
+export function getRequestError(action: AnyAction): RequestError | undefined {
+    return action.error;
+}
 
-    if (!name) {
-        return null;
+export function getRequestState(state: RequestState, action: AnyAction): RequestState {
+    const name = getRequestName(action) ?? '';
+    const timestamp = getRequestTimestamp(action);
+
+    if (!name || isNaN(timestamp)) {
+        return state;
     }
 
     const data = getRequestData(action);
     const error = getRequestError(action);
 
-    let result: RequestResult<P> | null = null;
+    let nextState;
 
     switch (action.type) {
         case requestPending(name):
-            result = { requesting: true, requested: undefined };
+            if (timestamp <= state.lastRequestTimestamp) {
+                nextState = state;
+            } else {
+                nextState = { ...state, lastRequestTimestamp: timestamp };
+            }
             break;
         case requestSuccess(name):
-            result = data !== null ? { requesting: false, requested: undefined, data } : null;
-            break;
         case requestFailure(name):
-            result = error !== null ? { requesting: false, requested: undefined, error } : null;
+            if (timestamp <= state.lastResponseTimestamp) {
+                nextState = state;
+            } else {
+                nextState = { ...state, data, error, lastResponseTimestamp: timestamp };
+            }
             break;
         default:
+            nextState = state;
             break;
     }
 
-    return result;
+    return nextState;
 }

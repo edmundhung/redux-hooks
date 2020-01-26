@@ -2,9 +2,10 @@ import { Action } from 'redux';
 
 export type Arguments = any[];
 
-export interface RequestAction<P = any> extends Action<string> {
+export interface RequestAction extends Action<string> {
     cacheKey: string;
-    payload?: P;
+    timestamp: number;
+    payload?: any;
     error?: RequestError;
 }
 
@@ -12,11 +13,23 @@ export interface RequestError {
     message: string;
 }
 
-export interface RequestResult<P, T = undefined> {
+export interface RequestResult<P = any> {
     requesting: boolean;
-    requested: T;
-    data?: Payload;
+    data?: P;
     error?: RequestError;
 }
 
-export type Request<Args extends Arguments, Payload = void> = (...args: Args) => Promise<Payload>;
+export interface RequestState {
+    lastResponseTimestamp: number;
+    lastRequestTimestamp: number;
+    data?: P;
+    error?: RequestError;
+}
+
+export type Request<A extends Arguments, P = void> = (...args: A) => P;
+
+export type RequestHookResult<P, A extends Arguments> = [
+    RequestResult<P>,
+    Request<A>,
+    (hook: Request<[RequestResult<P>, A]>) => () => void,
+];
